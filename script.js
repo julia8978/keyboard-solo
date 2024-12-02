@@ -25,47 +25,41 @@ function updateTimer() {
 }
 
 function startTimer() {
-    timerInterval = setInterval(updateTimer, 300);
+    timerInterval = setInterval(updateTimer, 1000);
 }
 
-document.addEventListener("keydown", (event) => {
-    const inputChar = event.key;
-    if (inputChar === currentWord[currentCharIndex]) {
-        document.querySelectorAll("#word-container span")[currentCharIndex].classList.remove("w");
-        document.querySelectorAll("#word-container span")[currentCharIndex].classList.add("c");
-        currentCharIndex++;
-        event.target.value = "";
-        if (mistakes == 0 && currentCharIndex === currentWord.length) {
-            correctCount++;
-            document.querySelector(".correct-count").innerText = correctCount;
-            setTimeout(() => {
-                setRandomWord();
-            }, 300);
-        }
+function symbolSuccess() {
+    document.querySelectorAll("#word-container span")[currentCharIndex].classList.remove("w");
+    document.querySelectorAll("#word-container span")[currentCharIndex].classList.add("c");
+    currentCharIndex++;
+}
 
-    } else {
-        document.querySelectorAll("#word-container span")[currentCharIndex].classList.remove("c");
-        document.querySelectorAll("#word-container span")[currentCharIndex].classList.add("w");
-        mistakes++;
-        document.querySelector(".word-mistakes").innerText = mistakes;
-    }
+function symbolFail() {
+    document.querySelectorAll("#word-container span")[currentCharIndex].classList.remove("c");
+    document.querySelectorAll("#word-container span")[currentCharIndex].classList.add("w");
+    mistakes++;
+    document.querySelector(".word-mistakes").innerText = mistakes;
+}
 
-    if (mistakes > 0 && currentCharIndex === currentWord.length) {
+function handleWordCompletion() {
+    if (mistakes > 0) {
         wrongCount++;
         document.querySelector(".wrong-count").innerHTML = wrongCount;
         mistakes = 0;
         document.querySelector(".word-mistakes").innerText = mistakes;
-        setTimeout(() => {
-            setRandomWord();
-        }, 300);
+    } else {
+        correctCount++;
+        document.querySelector(".correct-count").innerText = correctCount;
     }
+    setTimeout(setRandomWord, 300);
+}
 
+function gameWinAndOver() {
     if (correctCount >= 5) {
         setTimeout(() => {
             alert(`Победа! Вы ввели правильно 5 слов. Время: ${totalTime} секунд`);
             resetGame();
         }, 300);
-        
     }
 
     if (wrongCount >= 5) {
@@ -74,7 +68,20 @@ document.addEventListener("keydown", (event) => {
             resetGame();
         }, 300);
     }
+}
 
+document.addEventListener("keydown", (event) => {
+    const inputChar = event.key;
+    if (inputChar === currentWord[currentCharIndex]) {
+        symbolSuccess();
+        event.target.value = "";
+        if (currentCharIndex === currentWord.length) {
+            handleWordCompletion();
+        }
+    } else {
+        symbolFail();
+    }
+    gameWinAndOver();
 });
 
 function resetGame() {
