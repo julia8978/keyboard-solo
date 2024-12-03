@@ -12,8 +12,8 @@ function setRandomWord() {
     currentWord = words[Math.floor(Math.random() * words.length)];
     currentCharIndex = 0;
     mistakes = 0;
-    document.getElementById("word-container").innerHTML = currentWord.split('').map(char => `<span>${char}</span>`).join('');
-    document.querySelectorAll("#word-container span").forEach(span => span.classList.remove("c", "w"));
+    document.querySelector(".word").innerHTML = currentWord.split('').map(char => `<span>${char}</span>`).join('');
+    document.querySelectorAll(".word span").forEach(span => span.classList.remove("c", "w"));
 }
 
 function updateTimer() {
@@ -29,14 +29,14 @@ function startTimer() {
 }
 
 function symbolSuccess() {
-    document.querySelectorAll("#word-container span")[currentCharIndex].classList.remove("w");
-    document.querySelectorAll("#word-container span")[currentCharIndex].classList.add("c");
+    document.querySelectorAll(".word span")[currentCharIndex].classList.remove("w");
+    document.querySelectorAll(".word span")[currentCharIndex].classList.add("c");
     currentCharIndex++;
 }
 
 function symbolFail() {
-    document.querySelectorAll("#word-container span")[currentCharIndex].classList.remove("c");
-    document.querySelectorAll("#word-container span")[currentCharIndex].classList.add("w");
+    document.querySelectorAll(".word span")[currentCharIndex].classList.remove("c");
+    document.querySelectorAll(".word span")[currentCharIndex].classList.add("w");
     mistakes++;
     document.querySelector(".word-mistakes").innerText = mistakes;
 }
@@ -51,22 +51,18 @@ function handleWordCompletion() {
         correctCount++;
         document.querySelector(".correct-count").innerText = correctCount;
     }
-    setTimeout(setRandomWord, 300);
+    setTimeout(setRandomWord, 0);
 }
 
 function gameWinAndOver() {
     if (correctCount >= 5) {
-        setTimeout(() => {
-            alert(`Победа! Вы ввели правильно 5 слов. Время: ${totalTime} секунд`);
-            resetGame();
-        }, 300);
+        alert(`Победа! Вы ввели правильно 5 слов. Время: ${totalTime} секунд`);
+        resetGame();
     }
 
     if (wrongCount >= 5) {
-        setTimeout(() => {
-            alert(`Вы проиграли! Вы ввели неверно 5 слов. Время: ${totalTime} секунд`);
-            resetGame();
-        }, 300);
+        alert(`Вы проиграли! Вы ввели неверно 5 слов. Время: ${totalTime} секунд`);
+        resetGame();
     }
 }
 
@@ -74,14 +70,13 @@ document.addEventListener("keydown", (event) => {
     const inputChar = event.key;
     if (inputChar === currentWord[currentCharIndex]) {
         symbolSuccess();
-        event.target.value = "";
         if (currentCharIndex === currentWord.length) {
             handleWordCompletion();
         }
     } else {
         symbolFail();
     }
-    gameWinAndOver();
+    setTimeout(gameWinAndOver, 0);
 });
 
 function resetGame() {
